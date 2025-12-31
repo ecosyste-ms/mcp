@@ -8,7 +8,7 @@
     "lib/"
   ],
   "bin": {
-    "ecosystems-mcp": "./index.js"
+    "ecosystems-mcp": "index.js"
   },
   "type": "module",
   "scripts": {
