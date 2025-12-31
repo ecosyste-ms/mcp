@@ -1,0 +1,41 @@
+{
+  "name": "@ecosyste-ms/mcp",
+  "version": "1.0.0",
+  "description": "MCP server for querying ecosyste.ms packages API",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib/"
+  ],
+  "bin": {
+    "ecosystems-mcp": "./index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "mcp",
+    "ecosystems",
+    "packages",
+    "dependencies"
+  ],
+  "author": "ecosyste.ms",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecosyste-ms/mcp.git"
+  },
+  "homepage": "https://github.com/ecosyste-ms/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/ecosyste-ms/mcp/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^11.0.0"
+  }
+}
