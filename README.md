@@ -16,21 +16,9 @@ Or run directly with npx:
 npx @ecosyste-ms/mcp
 ```
 
-## Database Setup
+The database is bundled via [@ecosyste-ms/critical](https://github.com/ecosyste-ms/critical). No additional setup required.
 
-Download the critical packages database:
-
-```bash
-mkdir -p ~/.ecosystems
-curl -L https://packages.ecosyste.ms/critical-packages.db -o ~/.ecosystems/critical-packages.db
-```
-
-The server looks for the database in these locations (in order):
-1. `ECOSYSTEMS_DB_PATH` environment variable
-2. `./critical-packages.db` (current directory)
-3. `~/.ecosystems/critical-packages.db`
-
-Without a database, the server falls back to API requests for all queries.
+To use a custom database, set `ECOSYSTEMS_DB_PATH` or place `critical-packages.db` in your working directory.
 
 ## Usage with LLM Tools
 

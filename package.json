@@ -1,6 +1,6 @@
 {
   "name": "@ecosyste-ms/mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for querying ecosyste.ms packages API",
   "main": "index.js",
   "files": [
@@ -31,10 +31,14 @@
   "bugs": {
     "url": "https://github.com/ecosyste-ms/mcp/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@ecosyste-ms/critical": "*",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "better-sqlite3": "^11.0.0"
   }
