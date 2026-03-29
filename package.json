@@ -35,11 +35,10 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.5.0"
   },
   "dependencies": {
     "@ecosyste-ms/critical": "^1.0.20251231",
-    "@modelcontextprotocol/sdk": "^1.0.0",
-    "better-sqlite3": "^12.5.0"
+    "@modelcontextprotocol/sdk": "^1.0.0"
   }
 }
