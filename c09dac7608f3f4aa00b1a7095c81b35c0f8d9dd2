@@ -1,0 +1,29 @@
+package.json
+  a8415d56579ba664 38,42
+test/db.test.js
+  a8415d56579ba664 1-301
+test/index.test.js
+  a8415d56579ba664 3,10-27,141,281-627
+lib/db.js
+  a8415d56579ba664 1,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "c09dac7608f3f4aa00b1a7095c81b35c0f8d9dd2",
+  "prompts": {
+    "a8415d56579ba664": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a4d6c37d-bcc2-4066-b4d1-b5dad294fffd",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Andrew Nesbitt <andrewnez@gmail.com>",
+      "messages": [],
+      "total_additions": 674,
+      "total_deletions": 9,
+      "accepted_lines": 672,
+      "overriden_lines": 0
+    }
+  }
+}
