@@ -1,12 +1,6 @@
 #!/usr/bin/env node
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
-
+import { createServer } from "./lib/server.js";
 import { fetchAPI, VERSION, API_BASE } from "./lib/api.js";
 import { ecosystemToRegistry, parsePurl } from "./lib/registries.js";
 import { McpError, invalidEcosystem, invalidInput } from "./lib/errors.js";
@@ -224,23 +218,16 @@ async function handleToolCall(name, args) {
   }
 }
 
-const server = new Server(
-  {
-    name: "ecosystems-packages",
-    version: VERSION,
-  },
-  {
-    capabilities: {
-      tools: {},
-    },
-  }
+const server = createServer(
+  { name: "ecosystems-packages", version: VERSION },
+  { tools: {} }
 );
 
-server.setRequestHandler(ListToolsRequestSchema, async () => {
+server.setRequestHandler("tools/list", async () => {
   return { tools };
 });
 
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler("tools/call", async (request) => {
   const { name, arguments: args } = request.params;
 
   try {
@@ -269,11 +256,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
-async function main() {
-  initDatabase();
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error("Ecosystems MCP server running on stdio");
-}
-
-main().catch(console.error);
+initDatabase();
+server.start();
+console.error("Ecosystems MCP server running on stdio");
