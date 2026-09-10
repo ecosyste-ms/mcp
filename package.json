@@ -38,6 +38,6 @@
     "node": ">=22.5.0"
   },
   "dependencies": {
-    "@ecosyste-ms/critical": "^1.1.0"
+    "@ecosyste-ms/critical": "~1.3.0"
   }
 }
