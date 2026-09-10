@@ -20,6 +20,8 @@ The database is bundled via [@ecosyste-ms/critical](https://github.com/ecosyste-
 
 To use a custom database, set `ECOSYSTEMS_DB_PATH` or place `critical-packages.db` in your working directory.
 
+`ECOSYSTEMS_DB_PATH` is authoritative when set: the server uses exactly that file, or runs API-only if it is missing. Set it to `none` to skip the local database entirely.
+
 ## Usage with LLM Tools
 
 <details>
@@ -204,7 +206,7 @@ Add to `~/.gemini/settings.json`:
 
 - **get_package** - Get full package data by ecosystem and name
 - **lookup_package** - Find package by PURL, ecosystem+name, or repository URL
-- **get_package_versions** - Get all versions with publish dates
+- **get_package_versions** - Get all versions (publish dates come from the API; the local database stores version numbers only)
 - **get_package_advisories** - Get security advisories (CVEs)
 - **get_package_repository** - Get repository metadata (stars, forks, language)
 - **get_package_dependents** - Get packages that depend on this package

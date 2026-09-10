@@ -4,13 +4,17 @@ import { spawn } from "child_process";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
+import { createFixtureDb } from "../test-helpers/fixture-db.js";
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SERVER_PATH = join(__dirname, "..", "index.js");
 
-function startServer() {
+// Always pass a dbPath ("none" for API-only). Left unset, the server falls back
+// to the bundled database and assertions start depending on real, weekly data.
+function startServer(dbPath) {
   const proc = spawn("node", [SERVER_PATH], {
     stdio: ["pipe", "pipe", "pipe"],
-    env: { ...process.env, ECOSYSTEMS_DB_PATH: "" },
+    env: { ...process.env, ECOSYSTEMS_DB_PATH: dbPath },
   });
 
   let buffer = "";
@@ -63,9 +67,13 @@ function startServer() {
     });
   }
 
+  // Resolves once the child has exited, so callers can remove its database.
   function close() {
+    if (proc.exitCode !== null || proc.signalCode !== null) return Promise.resolve();
+    const exited = new Promise((resolve) => proc.once("exit", resolve));
     proc.stdin.end();
     proc.kill();
+    return exited;
   }
 
   return { send, request, close, proc, unmatched };
@@ -93,13 +101,16 @@ async function initServer(server) {
 
 describe("MCP protocol", () => {
   let server;
+  let fixture;
 
   before(async () => {
-    server = startServer();
+    fixture = createFixtureDb();
+    server = startServer(fixture.path);
   });
 
-  after(() => {
-    server.close();
+  after(async () => {
+    await server.close();
+    fixture.cleanup();
   });
 
   describe("initialization", () => {
@@ -161,7 +172,9 @@ describe("MCP protocol", () => {
       assert(response.result);
       assert(Array.isArray(response.result.content));
       assert.strictEqual(response.result.content[0].type, "text");
-      assert(response.result.content[0].text.length > 0);
+      assert(response.result.content[0].text.includes("Total packages: 2"));
+      assert(response.result.content[0].text.includes("2024-01-15"));
+      assert(response.result.content[0].text.includes("npm: 1"));
     });
 
     it("returns error content for unknown tool", async () => {
@@ -196,6 +209,8 @@ describe("MCP protocol", () => {
       assert(response.result);
       assert(Array.isArray(response.result.content));
       assert.strictEqual(response.result.content[0].type, "text");
+      assert(!response.result.isError, response.result.content[0].text);
+      assert(response.result.content[0].text.includes("npm/lodash"));
     });
 
     it("returns error for invalid ecosystem", async () => {
@@ -269,5 +284,55 @@ describe("MCP protocol", () => {
 
       assert.strictEqual(response.id, "abc-123");
     });
+  });
+});
+
+describe("MCP protocol without a local database", () => {
+  let server;
+
+  before(async () => {
+    server = startServer("none");
+    await initServer(server);
+  });
+
+  after(async () => {
+    await server.close();
+  });
+
+  it("reports that no database is loaded", async () => {
+    const response = await server.request({
+      jsonrpc: "2.0",
+      id: 10,
+      method: "tools/call",
+      params: { name: "get_database_info", arguments: {} },
+    });
+
+    assert(response.result.content[0].text.includes("No local database loaded"));
+  });
+
+  it("tells the caller search needs the local database", async () => {
+    const response = await server.request({
+      jsonrpc: "2.0",
+      id: 11,
+      method: "tools/call",
+      params: { name: "search_packages", arguments: { query: "lodash" } },
+    });
+
+    assert(response.result.content[0].text.includes("requires local database"));
+  });
+
+  it("still validates ecosystems without a database", async () => {
+    const response = await server.request({
+      jsonrpc: "2.0",
+      id: 12,
+      method: "tools/call",
+      params: {
+        name: "get_package",
+        arguments: { ecosystem: "fakesystem", name: "whatever" },
+      },
+    });
+
+    assert.strictEqual(response.result.isError, true);
+    assert(response.result.content[0].text.includes("fakesystem"));
   });
 });

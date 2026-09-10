@@ -13,6 +13,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
+    "pretest": "node test-helpers/warm-db.js",
     "test": "node --test"
   },
   "keywords": [
